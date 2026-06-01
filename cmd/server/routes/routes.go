@@ -3,8 +3,12 @@ package routes
 
 import (
 	"bubblegum-api/cmd/server/handlers"
+	"bubblegum-api/internal/repositories/categorias"
 	"bubblegum-api/internal/repositories/dulces"
+	"bubblegum-api/internal/repositories/marcas"
+	"bubblegum-api/internal/repositories/presentaciones"
 	getdulcebycode "bubblegum-api/internal/usecase/get_dulce_by_code"
+	getfiltros "bubblegum-api/internal/usecase/get_filtros"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -39,9 +43,27 @@ func (r router) MapRoutes() {
 		DB: r.db,
 	}
 
+	marcaProvider := marcas.Repository{
+		DB: r.db,
+	}
+
+	categoriaProvider := categorias.Repository{
+		DB: r.db,
+	}
+
+	presentacionProvider := presentaciones.Repository{
+		DB: r.db,
+	}
+
 	//UseCase
 	getdulcebycodeUseCase := getdulcebycode.Implementation{
 		DulcesProvider: dulceProvider,
+	}
+
+	getfilros := getfiltros.Implementation{
+		MarcasProvider:         marcaProvider,
+		CategoriasProvider:     categoriaProvider,
+		PresentacionesProvider: presentacionProvider,
 	}
 
 	//Handlers
@@ -49,9 +71,14 @@ func (r router) MapRoutes() {
 		UseCase: getdulcebycodeUseCase,
 	}
 
+	getfiltrosHandler := handlers.GetFiltros{
+		UseCase: getfilros,
+	}
+
 	//endPoint
-	p := r.rg.Group("/dulces")
+	dulcesGrupo := r.rg.Group("/dulces")
+	filtrosGrupo := r.rg.Group("/filtros")
 
-	p.GET("/:codigo", getdulcebycodeHandler.Handle())
-
+	dulcesGrupo.GET("/:codigo", getdulcebycodeHandler.Handle())
+	filtrosGrupo.GET("/", getfiltrosHandler.Handle())
 }

@@ -3,17 +3,17 @@ package entities
 import "time"
 
 type Dulce struct {
-	ID               uint64
-	Nombre           string
-	MarcaID          uint64
-	Precio           int
-	Peso             float64
-	Unidades         int
-	PresentacionID   uint64
-	Descripcion      string
-	Imagen           string
-	FechaVencimiento time.Time
-	FechaExpedicion  time.Time
-	Disponibles      int
-	Codigo           string
+	ID               uint64    `json: "id"`
+	Nombre           string    `json: "nombre"`
+	MarcaID          uint64    `json: "marca_id"`
+	Precio           int       `json: "precio"`
+	Peso             float64   `json: "peso"`
+	Unidades         int       `json: "unidades"`
+	PresentacionID   uint64    `json: "presentacion_id"`
+	Descripcion      string    `json: "descripcion"`
+	Imagen           string    `json: "imagen"`
+	FechaVencimiento time.Time `json: "fecha_vencimiento"`
+	FechaExpedicion  time.Time `json: "fecha_expedicion"`
+	Disponibles      int       `json: "disponibles"`
+	Codigo           string    `json: "codigo"`
 }
