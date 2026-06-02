@@ -1,7 +1,9 @@
 package providers
 
-import "bubblegum-api/internal/domain/entities"
+import (
+	"bubblegum-api/internal/domain/dto/query"
+)
 
 type DulcesProvider interface {
-	GetByCode(codigo string) (dulce entities.Dulce, err error)
+	GetByCode(codigo string) (dulce query.DetalleDulce, err error)
 }

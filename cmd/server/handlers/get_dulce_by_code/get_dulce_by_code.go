@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"bubblegum-api/internal/domain/entities"
+	"bubblegum-api/internal/domain/dto/query"
 	"bubblegum-api/internal/domain/errors/database"
 	"net/http"
 
@@ -13,7 +13,7 @@ type GetDulcebyCode struct {
 }
 
 type UseCase interface {
-	Execute(codigo string) (entities.Dulce, error)
+	Execute(codigo string) (query.DetalleDulce, error)
 }
 
 func (handler GetDulcebyCode) Handle() gin.HandlerFunc {

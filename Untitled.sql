@@ -91,15 +91,17 @@ CREATE TABLE IF NOT EXISTS `dulceria`.`dulces` (
   `id` BIGINT NOT NULL,
   `presentaciones_id` BIGINT NOT NULL,
   `marcas_id` BIGINT NOT NULL,
-  `nombre` VARCHAR(45) NOT NULL,
-  `precio` DECIMAL NOT NULL,
-  `peso` DECIMAL NOT NULL,
-  `unidades` INT NOT NULL,
-  `descripcion` LONGTEXT NOT NULL,
-  `fecha_vencimiento` DATETIME NOT NULL,
-  `fecha_expedicion` DATETIME NOT NULL,
-  `disponibles` INT NOT NULL,
-  `codigo` VARCHAR(45) NOT NULL,
+  `nombre` VARCHAR(45) NULL,
+  `precio` DECIMAL NULL,
+  `peso` DECIMAL NULL,
+  `unidades` INT NULL,
+  `descripcion` LONGTEXT NULL,
+  `fecha_vencimiento` DATETIME NULL,
+  `fecha_expedicion` DATETIME NULL,
+  `disponibles` INT NULL,
+  `codigo` VARCHAR(45) NULL,
+  `imagen` VARCHAR(45) NULL,
+  `subtotal` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_dulces_presentaciones_idx` (`presentaciones_id` ASC) VISIBLE,
   INDEX `fk_dulces_marcas1_idx` (`marcas_id` ASC) VISIBLE,
@@ -207,92 +209,3 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-
--- -----------------------------------------------------
--- procedimiento almacenado GetDetalleDulceByCode
--- -----------------------------------------------------
-DELIMITER $$
-
-CREATE PROCEDURE GetDetalleDulceByCode(
-    IN pCodigo VARCHAR(45)
-)
-BEGIN
-
-    SELECT
-        d.id,
-        d.peso,
-        d.precio AS precio_unidad,
-        d.disponibles,
-        0 AS subtotal,
-        d.codigo,
-        d.nombre,
-        d.descripcion,
-        d.imagen,
-        DATE_FORMAT(d.fecha_vencimiento, '%Y-%m-%d') AS fecha_vencimiento,
-        DATE_FORMAT(d.fecha_expedicion, '%Y-%m-%d') AS fecha_expedicion,
-
-        m.id AS marca_id,
-        m.nombre AS marca_nombre,
-
-        p.id AS presentacion_id,
-        p.nombre AS presentacion_nombre
-
-    FROM dulces d
-    INNER JOIN marcas m
-        ON d.marcas_id = m.id
-    INNER JOIN presentaciones p
-        ON d.presentaciones_id = p.id
-
-    WHERE d.codigo = pCodigo
-    LIMIT 1;
-
-END$$
-
-DELIMITER ;
-
--- -----------------------------------------------------
--- procedimiento almacenado GetCategoriasDulceCode
--- -----------------------------------------------------
-
-DELIMITER $$
-
-CREATE PROCEDURE GetCategoriasByDulceCode(
-    IN p_codigo VARCHAR(45)
-)
-BEGIN
-
-    SELECT
-        c.id,
-        c.nombre
-    FROM categorias c
-    INNER JOIN categorias_dulces cd
-        ON cd.categorias_id = c.id
-    INNER JOIN dulces d
-        ON d.id = cd.dulces_id
-    WHERE d.codigo = p_codigo;
-
-END$$
-
-DELIMITER ;
-
-
-DELIMITER $$
-
-CREATE PROCEDURE GetCategoriasByDulceID(
-    IN p_id VARCHAR(45)
-)
-BEGIN
-
-    SELECT
-        c.id,
-        c.nombre
-    FROM categorias c
-    INNER JOIN categorias_dulces cd
-        ON cd.categorias_id = c.id
-    INNER JOIN dulces d
-        ON d.id = cd.dulces_id
-    WHERE d.id = p_id;
-
-END$$
-
-DELIMITER ;

@@ -2,6 +2,7 @@ package dulces
 
 import (
 	dbmocks "bubblegum-api/internal/app/config/database/mocks"
+	"bubblegum-api/internal/domain/dto/query"
 	"bubblegum-api/internal/domain/entities"
 	"reflect"
 	"testing"
@@ -18,30 +19,43 @@ var (
 )
 
 const (
-	QuerySelectByCode = "SELECT * FROM `dulces` WHERE codigo = ? ORDER BY `dulces`.`id` LIMIT ?"
+	QuerySelectByCode = "Call GetDetalleDulceByCode(?)"
 )
 
 func TestGetByCodeOK(t *testing.T) {
 	initialize()
 
-	dulce := GetDulce()
+	dulce := GetResponse()
+
 	t.Log(QuerySelectByCode)
-	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(dulce.Codigo, 1).
+	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(dulce.Codigo).
 		WillReturnRows(
-			sqlmock.NewRows([]string{"id", "nombre", "presentacion_id", "descripcion", "imagen",
-				"disponibles", "precio", "peso", "marca_id", "codigo"}).
-				AddRow(
-					dulce.ID,
-					dulce.Nombre,
-					dulce.PresentacionID,
-					dulce.Descripcion,
-					dulce.Imagen,
-					dulce.Disponibles,
-					dulce.Precio,
-					dulce.Peso,
-					dulce.MarcaID,
-					dulce.Codigo,
-				),
+			sqlmock.NewRows([]string{
+				"id",
+				"nombre",
+				"presentacion_id",
+				"presentacion_nombre",
+				"descripcion",
+				"imagen",
+				"disponibles",
+				"precio_unidad",
+				"peso",
+				"marca_id",
+				"marca_nombre",
+				"codigo"}).AddRow(
+				dulce.ID,
+				dulce.Nombre,
+				dulce.Presentacion.ID,
+				dulce.Presentacion.Nombre,
+				dulce.Descripcion,
+				dulce.Imagen,
+				dulce.Disponibles,
+				dulce.PrecioUnidad,
+				dulce.Peso,
+				dulce.Marca.ID,
+				dulce.Marca.Nombre,
+				dulce.Codigo,
+			),
 		)
 	dulceRecibido, err := repository.GetByCode(dulce.Codigo)
 	assert.NoError(t, err)
@@ -51,7 +65,7 @@ func TestGetByCodeOK(t *testing.T) {
 func TestByCodeErrorNotFound(t *testing.T) {
 	initialize()
 
-	mockDB.ExpectQuery(QuerySelectByCode).WithArgs("2", 1).WillReturnError(gorm.ErrRecordNotFound)
+	mockDB.ExpectQuery(QuerySelectByCode).WithArgs("2").WillReturnError(gorm.ErrRecordNotFound)
 
 	dulceRecibido, err := repository.GetByCode("2")
 
@@ -65,7 +79,7 @@ func TestByCodeErrorNotFound(t *testing.T) {
 func TestByCodeInternalServerError(t *testing.T) {
 	initialize()
 
-	mockDB.ExpectQuery(QuerySelectByCode).WithArgs("2", 1).WillReturnError(gorm.ErrInvalidData)
+	mockDB.ExpectQuery(QuerySelectByCode).WithArgs("2").WillReturnError(gorm.ErrInvalidData)
 
 	dulceRecibido, err := repository.GetByCode("2")
 
@@ -84,18 +98,24 @@ func initialize() {
 	}
 }
 
-func GetDulce() (dulce entities.Dulce) {
-	dulce = entities.Dulce{
-		ID:             2,
-		Nombre:         "Chocolatina",
-		PresentacionID: 1,
-		Descripcion:    "Deliciosa chocolatina que se derrite en tu boca",
-		Imagen:         "imagen",
-		Disponibles:    100,
-		Precio:         1000,
-		Peso:           40,
-		MarcaID:        1,
-		Codigo:         "2",
+func GetResponse() (response query.DetalleDulce) {
+	response = query.DetalleDulce{
+		ID:     2,
+		Nombre: "Chocolatina",
+		Presentacion: entities.Presentacion{
+			ID:     1,
+			Nombre: "Empaque",
+		},
+		Descripcion:  "Deliciosa chocolatina que se derrite en tu boca",
+		Imagen:       "imagen",
+		Disponibles:  100,
+		PrecioUnidad: 1000,
+		Peso:         40,
+		Marca: entities.Marca{
+			ID:     1,
+			Nombre: "Jet",
+		},
+		Codigo: "2",
 	}
 	return
 }

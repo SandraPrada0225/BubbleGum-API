@@ -18,36 +18,37 @@ var (
 )
 
 const (
-	QuerySelectAll = "SELECT * FROM `Categorias`"
+	QuerySelectByCode = "Call GetCategoriasByDulceID(?)"
 )
 
-func TestGetAllOK(t *testing.T) {
+func TestGetByCodeOK(t *testing.T) {
 	initialize()
 
-	categorias := GetCategorias()
-	t.Log(QuerySelectAll)
-	mockDB.ExpectQuery(QuerySelectAll).
-		WillReturnRows(sqlmock.NewRows([]string{"id", "nombre"}).
-			AddRow(categorias[0].ID, categorias[0].Nombre).
-			AddRow(categorias[1].ID, categorias[1].Nombre))
+	mockCategoria := GetMockCategorias()
 
-	categoriasRecibidas, err := repository.GetAll()
+	t.Log(QuerySelectByCode)
+	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(1).WillReturnRows(
+		sqlmock.NewRows([]string{"id", "nombre"}).
+			AddRow(mockCategoria[0].ID, mockCategoria[0].Nombre).
+			AddRow(mockCategoria[1].ID, mockCategoria[1].Nombre))
+
+	response, err := repository.GetCategoriasByDulceID(1)
 
 	assert.NoError(t, err)
-	assert.Equal(t, categorias, categoriasRecibidas)
+	assert.Equal(t, mockCategoria, response)
 }
 
 func TestByCodeInternalServerError(t *testing.T) {
 	initialize()
-	mockDB.ExpectQuery(QuerySelectAll).WillReturnError(gorm.ErrInvalidData)
+	mockDB.ExpectQuery(QuerySelectByCode).WithArgs(1).WillReturnError(gorm.ErrInvalidData)
 
-	categoriasRecibidas, err := repository.GetAll()
+	dulceRecibido, err := repository.GetCategoriasByDulceID(1)
 
 	typeErr := reflect.TypeOf(err).String()
 
 	assert.Error(t, err)
 	assert.Equal(t, "database.InternalServerError", typeErr)
-	assert.Empty(t, categoriasRecibidas)
+	assert.Empty(t, dulceRecibido)
 }
 
 func initialize() {
@@ -58,7 +59,7 @@ func initialize() {
 	}
 }
 
-func GetCategorias() (categorias []entities.Categoria) {
+func GetMockCategorias() (categorias []entities.Categoria) {
 	categorias = []entities.Categoria{
 		{
 			ID:     1,

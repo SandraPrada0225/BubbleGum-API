@@ -2,13 +2,15 @@
 package routes
 
 import (
-	"bubblegum-api/cmd/server/handlers"
+	getdulcebycodehandler "bubblegum-api/cmd/server/handlers/get_dulce_by_code"
+	getfiltroshandler "bubblegum-api/cmd/server/handlers/get_filtros"
+	"bubblegum-api/cmd/server/handlers/ping"
 	"bubblegum-api/internal/repositories/categorias"
 	"bubblegum-api/internal/repositories/dulces"
 	"bubblegum-api/internal/repositories/marcas"
 	"bubblegum-api/internal/repositories/presentaciones"
-	getdulcebycode "bubblegum-api/internal/usecase/get_dulce_by_code"
-	getfiltros "bubblegum-api/internal/usecase/get_filtros"
+	getdulcebycodeusecase "bubblegum-api/internal/usecase/get_dulce_by_code"
+	getfiltrosusecase "bubblegum-api/internal/usecase/get_filtros"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -36,8 +38,8 @@ func NewRouter(eng *gin.Engine, db *gorm.DB) Router {
 func (r router) MapRoutes() {
 	r.rg = r.eng.Group("/api")
 
-	ping := handlers.Ping{}
-	r.rg.GET("/ping", ping.Handle())
+	pingHandler := ping.Ping{}
+	r.rg.GET("/ping", pingHandler.Handle())
 	//providers
 	dulceProvider := dulces.Repository{
 		DB: r.db,
@@ -47,7 +49,7 @@ func (r router) MapRoutes() {
 		DB: r.db,
 	}
 
-	categoriaProvider := categorias.Repository{
+	categoriasProvider := categorias.Repository{
 		DB: r.db,
 	}
 
@@ -56,29 +58,30 @@ func (r router) MapRoutes() {
 	}
 
 	//UseCase
-	getdulcebycodeUseCase := getdulcebycode.Implementation{
-		DulcesProvider: dulceProvider,
+	getDulceByCodeUseCase := getdulcebycodeusecase.Implementation{
+		DulcesProvider:     dulceProvider,
+		CategoriasProvider: &categoriasProvider,
 	}
 
-	getfilros := getfiltros.Implementation{
+	getfilros := getfiltrosusecase.Implementation{
 		MarcasProvider:         marcaProvider,
-		CategoriasProvider:     categoriaProvider,
+		CategoriasProvider:     categoriasProvider,
 		PresentacionesProvider: presentacionProvider,
 	}
 
 	//Handlers
-	getdulcebycodeHandler := handlers.GetDulcebyCode{
-		UseCase: getdulcebycodeUseCase,
+	getDulceByCodeHandler := getdulcebycodehandler.GetDulcebyCode{
+		UseCase: getDulceByCodeUseCase,
 	}
 
-	getfiltrosHandler := handlers.GetFiltros{
+	getFiltrosHandler := getfiltroshandler.GetFiltros{
 		UseCase: getfilros,
 	}
 
-	//endPoint
+	// endPoint
 	dulcesGrupo := r.rg.Group("/dulces")
-	filtrosGrupo := r.rg.Group("/filtros")
+	dulcesGrupo.GET("/:codigo", getDulceByCodeHandler.Handle())
 
-	dulcesGrupo.GET("/:codigo", getdulcebycodeHandler.Handle())
-	filtrosGrupo.GET("/", getfiltrosHandler.Handle())
+	filtrosGrupo := r.rg.Group("/filtros")
+	filtrosGrupo.GET("/", getFiltrosHandler.Handle())
 }

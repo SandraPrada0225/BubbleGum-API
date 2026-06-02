@@ -17,7 +17,13 @@ func (r Repository) GetAll() (presentaciones []entities.Presentacion, err error)
 	err = r.DB.Find(&presentaciones).Error
 
 	if err != nil {
-		return []entities.Presentacion{}, database.NewInterlServerError(errormessages.InternalServerError)
+		params := errormessages.Parameters{
+			"resource": "presentaciones",
+			"error":    err.Error(),
+		}
+
+		return []entities.Presentacion{},
+			database.NewInterlServerError(errormessages.InternalServerError.GetMessageWithParams(params))
 	}
 	return
 }

@@ -1,5 +1,5 @@
 // maneja peticiones HTTP
-package handlers
+package ping
 
 import "github.com/gin-gonic/gin"
 

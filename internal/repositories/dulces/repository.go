@@ -1,7 +1,7 @@
 package dulces
 
 import (
-	"bubblegum-api/internal/domain/entities"
+	"bubblegum-api/internal/domain/dto/query"
 	"bubblegum-api/internal/domain/errors/database"
 	errormessages "bubblegum-api/internal/domain/errors/error_messages"
 	"errors"
@@ -13,16 +13,21 @@ type Repository struct {
 	DB *gorm.DB
 }
 
-func (r Repository) GetByCode(codigo string) (dulce entities.Dulce, err error) {
-	err = r.DB.Where("codigo = ?", codigo).First(&dulce).Error
+const GetDetalleDulcebyCodeSP = "Call GetDetalleDulceByCode(?)"
+
+func (r Repository) GetByCode(codigo string) (detalleDulce query.DetalleDulce, err error) {
+	err = r.DB.Raw(GetDetalleDulcebyCodeSP, codigo).Take(&detalleDulce).Error
 
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return entities.Dulce{}, database.NewNotFoundError(errormessages.DulceNotFound)
+		params := errormessages.Parameters{
+			"resource":   "dulces",
+			"dulce_code": codigo,
 		}
-		return entities.Dulce{},
-			database.NewInterlServerError(errormessages.InternalServerError)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			err = database.NewNotFoundError(errormessages.DulceNotFound.GetMessageWithParams(params))
+		} else {
+			err = database.NewInterlServerError(errormessages.DulceNotFound.GetMessageWithParams(params))
+		}
 	}
 	return
-
 }
