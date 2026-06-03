@@ -6,7 +6,7 @@ type Dulce struct {
 	ID               uint64    `json: "id"`
 	Nombre           string    `json: "nombre"`
 	MarcaID          uint64    `json: "marca_id"`
-	Precio           int       `json: "precio"`
+	Precio           float64   `json: "precio"`
 	Peso             float64   `json: "peso"`
 	Unidades         int       `json: "unidades"`
 	PresentacionID   uint64    `json: "presentacion_id"`

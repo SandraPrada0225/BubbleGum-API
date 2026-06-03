@@ -10,6 +10,8 @@ type (
 const (
 	DulceNotFound       ErrorMessage = "No se encontró un dulce con ese codigo"
 	InternalServerError ErrorMessage = "Ha ocurrido un error inesperado"
+	CarritoNotFound     ErrorMessage = "No se encontró un carrito con ese id"
+	InvalidTypeerror    ErrorMessage = "El tipo de dato es invalido"
 )
 
 func (e ErrorMessage) String() string {
@@ -20,7 +22,7 @@ func (e ErrorMessage) GetMessageWithParams(params Parameters) string {
 	msg := e.String()
 
 	for key, value := range params {
-		msg = fmt.Sprintf("%s. %s - %s", msg, key, value)
+		msg = fmt.Sprintf("%s. %s: %s", msg, key, value)
 	}
 	return msg
 }
