@@ -21,10 +21,10 @@ func (useCase Implementation) Execute(id uint64) (query.GetDetalleCarrito, error
 	if err != nil {
 		return query.GetDetalleCarrito{}, err
 	}
-	var dulcesList []query.DetalleDulce
+	var dulcesList []query.DulceInCarrito
 
-	for _, dulceID := range dulcesIDList {
-		dulce, err := useCase.DulcesProvider.GetDetailByID(dulceID)
+	for _, dulcesInCarrito := range dulcesIDList {
+		dulce, err := useCase.DulcesProvider.GetDetailByID(dulcesInCarrito.DulceID)
 		if err != nil {
 			return query.GetDetalleCarrito{}, err
 		}
@@ -33,7 +33,8 @@ func (useCase Implementation) Execute(id uint64) (query.GetDetalleCarrito, error
 			return query.GetDetalleCarrito{}, err
 		}
 		dulce.AddCategorias(categoriasList)
-		dulcesList = append(dulcesList, dulce)
+		dulceInCarritoItem := query.NewDulceInCarrito(dulce, dulcesInCarrito.Unidades, dulcesInCarrito.Subtotal)
+		dulcesList = append(dulcesList, dulceInCarritoItem)
 	}
 
 	return query.NewGetDetalleCarrito(carrito, dulcesList), nil

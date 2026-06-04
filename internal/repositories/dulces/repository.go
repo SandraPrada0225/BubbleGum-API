@@ -54,19 +54,19 @@ func (r Repository) GetDetailByID(id uint64) (detalleDulce query.DetalleDulce, e
 	return
 }
 
-func (r Repository) GetDulcesListByCarritoID(carrito_id uint64) ([]uint64, error) {
-	var dulcesIDList []uint64
+func (r Repository) GetDulcesListByCarritoID(carrito_id uint64) ([]entities.CarritoDulce, error) {
+	var dulcesInCarrito []entities.CarritoDulce
 
 	err := r.DB.Model(&entities.CarritoDulce{}).Select("dulces_id").
-		Where("carritos_id = ?", carrito_id).Find(&dulcesIDList).Error
+		Where("carritos_id = ?", carrito_id).Find(&dulcesInCarrito).Error
 
 	if err != nil {
 		params := errormessages.Parameters{
-			"resource":   "carrito",
+			"resource":   "dulces",
 			"carrito_id": carrito_id,
 			"error":      err.Error(),
 		}
-		return []uint64{}, database.NewInterlServerError(string(errormessages.InternalServerError.GetMessageWithParams(params)))
+		return []entities.CarritoDulce{}, database.NewInterlServerError(string(errormessages.InternalServerError.GetMessageWithParams(params)))
 	}
-	return dulcesIDList, nil
+	return dulcesInCarrito, nil
 }

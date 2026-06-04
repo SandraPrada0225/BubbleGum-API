@@ -5,11 +5,11 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema dulceria
+-- Schema mydb
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema dulceria
+-- Schema mydb
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `dulceria` DEFAULT CHARACTER SET utf8 ;
 -- -----------------------------------------------------
@@ -18,7 +18,7 @@ CREATE SCHEMA IF NOT EXISTS `dulceria` DEFAULT CHARACTER SET utf8 ;
 USE `dulceria` ;
 
 -- -----------------------------------------------------
--- Table `dulceria`.`estados_carrito`
+-- Table `mydb`.`estados_carrito`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dulceria`.`estados_carrito` (
   `id` BIGINT NOT NULL,
@@ -28,7 +28,7 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `dulceria`.`carritos`
+-- Table `mydb`.`carritos`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dulceria`.`carritos` (
   `id` BIGINT NOT NULL,
@@ -39,14 +39,14 @@ CREATE TABLE IF NOT EXISTS `dulceria`.`carritos` (
   INDEX `fk_carritos_estados_carrito1_idx` (`estados_carrito_id` ASC) VISIBLE,
   CONSTRAINT `fk_carritos_estados_carrito1`
     FOREIGN KEY (`estados_carrito_id`)
-    REFERENCES `dulceria`.`estados_carrito` (`id`)
+    REFERENCES `mydb`.`estados_carrito` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `dulceria`.`categorias`
+-- Table `mydb`.`categorias`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dulceria`.`categorias` (
   `id` BIGINT NOT NULL,
@@ -56,7 +56,7 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `dulceria`.`usuarios`
+-- Table `mydb`.`usuarios`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dulceria`.`usuarios` (
   `id` BIGINT NOT NULL,
@@ -65,7 +65,7 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `dulceria`.`presentaciones`
+-- Table `mydb`.`presentaciones`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dulceria`.`presentaciones` (
   `id` BIGINT NOT NULL,
@@ -75,7 +75,7 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `dulceria`.`marcas`
+-- Table `mydb`.`marcas`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dulceria`.`marcas` (
   `id` BIGINT NOT NULL,
@@ -85,7 +85,7 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `dulceria`.`dulces`
+-- Table `mydb`.`dulces`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dulceria`.`dulces` (
   `id` BIGINT NOT NULL,
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS `dulceria`.`dulces` (
   `precio` DECIMAL NOT NULL,
   `peso` DECIMAL NOT NULL,
   `unidades` INT NOT NULL,
-  `descripcion` LONGTEXT NOT NULL,
+  `descripcion` VARCHAR(45) NOT NULL,
   `fecha_vencimiento` DATETIME NOT NULL,
   `fecha_expedicion` DATETIME NOT NULL,
   `disponibles` INT NOT NULL,
@@ -105,19 +105,19 @@ CREATE TABLE IF NOT EXISTS `dulceria`.`dulces` (
   INDEX `fk_dulces_marcas1_idx` (`marcas_id` ASC) VISIBLE,
   CONSTRAINT `fk_dulces_presentaciones`
     FOREIGN KEY (`presentaciones_id`)
-    REFERENCES `dulceria`.`presentaciones` (`id`)
+    REFERENCES `mydb`.`presentaciones` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_dulces_marcas1`
     FOREIGN KEY (`marcas_id`)
-    REFERENCES `dulceria`.`marcas` (`id`)
+    REFERENCES `mydb`.`marcas` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `dulceria`.`medios_de_pago`
+-- Table `mydb`.`medios_de_pago`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dulceria`.`medios_de_pago` (
   `id` BIGINT NOT NULL,
@@ -127,7 +127,7 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `dulceria`.`ventas`
+-- Table `mydb`.`ventas`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dulceria`.`ventas` (
   `id` BIGINT NOT NULL,
@@ -140,24 +140,24 @@ CREATE TABLE IF NOT EXISTS `dulceria`.`ventas` (
   INDEX `fk_ventas_usuarios1_idx` (`usuarios_id` ASC) VISIBLE,
   CONSTRAINT `fk_ventas_medios_de_pago1`
     FOREIGN KEY (`medios_de_pago_id`)
-    REFERENCES `dulceria`.`medios_de_pago` (`id`)
+    REFERENCES `mydb`.`medios_de_pago` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_ventas_carritos1`
     FOREIGN KEY (`carritos_id`)
-    REFERENCES `dulceria`.`carritos` (`id`)
+    REFERENCES `mydb`.`carritos` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_ventas_usuarios1`
     FOREIGN KEY (`usuarios_id`)
-    REFERENCES `dulceria`.`usuarios` (`id`)
+    REFERENCES `mydb`.`usuarios` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `dulceria`.`categorias_dulces`
+-- Table `mydb`.`categorias_dulces`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dulceria`.`categorias_dulces` (
   `dulces_id` BIGINT NOT NULL,
@@ -168,19 +168,19 @@ CREATE TABLE IF NOT EXISTS `dulceria`.`categorias_dulces` (
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_categorias_dulces_dulces1`
     FOREIGN KEY (`dulces_id`)
-    REFERENCES `dulceria`.`dulces` (`id`)
+    REFERENCES `mydb`.`dulces` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_categorias_dulces_categorias1`
     FOREIGN KEY (`categorias_id`)
-    REFERENCES `dulceria`.`categorias` (`id`)
+    REFERENCES `mydb`.`categorias` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `dulceria`.`carritos_dulces`
+-- Table `mydb`.`carritos_dulces`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dulceria`.`carritos_dulces` (
   `dulces_id` BIGINT NOT NULL,
@@ -193,12 +193,12 @@ CREATE TABLE IF NOT EXISTS `dulceria`.`carritos_dulces` (
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_carritos_dulces_dulces1`
     FOREIGN KEY (`dulces_id`)
-    REFERENCES `dulceria`.`dulces` (`id`)
+    REFERENCES `mydb`.`dulces` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_carritos_dulces_carritos1`
     FOREIGN KEY (`carritos_id`)
-    REFERENCES `dulceria`.`carritos` (`id`)
+    REFERENCES `mydb`.`carritos` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -207,6 +207,10 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+ALTER TABLE dulces
+ADD COLUMN imagen VARCHAR(255) NOT NULL,
+ADD COLUMN subtotal INT NOT NULL DEFAULT 0;
 
 -- -----------------------------------------------------
 -- procedimiento almacenado GetDetalleDulceByCode
@@ -296,3 +300,50 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedimiento almacenado GetDetalleDulceByID
+-- -----------------------------------------------------
+DELIMITER $$
+
+CREATE PROCEDURE GetDetalleDulceByID(
+    IN p_id int 
+)
+BEGIN
+
+    SELECT
+        d.id,
+        d.peso,
+        d.precio AS precio_unidad,
+        d.disponibles,
+        0 AS subtotal,
+        d.codigo,
+        d.nombre,
+        d.descripcion,
+        d.imagen,
+        DATE_FORMAT(d.fecha_vencimiento, '%Y-%m-%d') AS fecha_vencimiento,
+        DATE_FORMAT(d.fecha_expedicion, '%Y-%m-%d') AS fecha_expedicion,
+
+        m.id AS marca_id,
+        m.nombre AS marca_nombre,
+
+        p.id AS presentacion_id,
+        p.nombre AS presentacion_nombre
+
+    FROM dulces d
+    INNER JOIN marcas m
+        ON d.marcas_id = m.id
+    INNER JOIN presentaciones p
+        ON d.presentaciones_id = p.id
+
+    WHERE d.id = p_id
+    LIMIT 1;
+
+END$$
+
+DELIMITER ;
+_____________
+--agregamos los campos subtotal y descuento al carrito
+ALTER TABLE carritos
+ADD COLUMN subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
+ADD COLUMN descuento DECIMAL(10,2) NOT NULL DEFAULT 0;

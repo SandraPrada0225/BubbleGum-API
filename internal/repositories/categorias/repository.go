@@ -12,7 +12,7 @@ type Repository struct {
 	DB *gorm.DB
 }
 
-const GetDetalleDulcebyCodeSP = "Call GetCategoriasByDulceID(?)"
+const GetCategoriasByDulcebyIDSP = "Call GetCategoriasByDulceID(?)"
 
 func (r Repository) GetAll() (categorias []entities.Categoria, err error) {
 	err = r.DB.Find(&categorias).Error
@@ -28,7 +28,7 @@ func (r Repository) GetAll() (categorias []entities.Categoria, err error) {
 }
 
 func (r Repository) GetCategoriasByDulceID(dulceID uint64) (categorias []entities.Categoria, err error) {
-	err = r.DB.Raw(GetDetalleDulcebyCodeSP, dulceID).Scan(&categorias).Error
+	err = r.DB.Raw(GetCategoriasByDulcebyIDSP, dulceID).Scan(&categorias).Error
 
 	if err != nil {
 		params := errormessages.Parameters{

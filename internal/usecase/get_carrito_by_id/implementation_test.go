@@ -27,7 +27,7 @@ func TestWhenEverythingWentSucessfullyThenShouldReturnCarrito(t *testing.T) {
 	useCase := getImplementation()
 
 	mockCarritosProvider.On("GetCarritoByCarritoID", mockCarritoID).Return(getMockCarrito(), nil)
-	mockDulcesProvider.On("GetDulcesListByCarritoID", mockCarritoID).Return(getMockDulcesIDList(), nil)
+	mockDulcesProvider.On("GetDulcesListByCarritoID", mockCarritoID).Return(getMockDulcesInCarritoList(), nil)
 	mockDulcesProvider.On("GetDetailByID", mockDulceID1).Return(getPartialResponse1(), nil)
 	mockDulcesProvider.On("GetDetailByID", mockDulceID2).Return(getPartialResponse2(), nil)
 	mockCategoriasProvider.On("GetCategoriasByDulceID", mockDulceID1).Return(getMockCategorias1(), nil)
@@ -83,7 +83,7 @@ func TestWhenGetDulcesCarritoWentWrongThenShouldReturnCarrito(t *testing.T) {
 	useCase := getImplementation()
 
 	mockCarritosProvider.On("GetCarritoByCarritoID", mockCarritoID).Return(getMockCarrito(), nil)
-	mockDulcesProvider.On("GetDulcesListByCarritoID", mockCarritoID).Return(getMockDulcesIDList(), database.NewInterlServerError("error"))
+	mockDulcesProvider.On("GetDulcesListByCarritoID", mockCarritoID).Return(getMockDulcesInCarritoList(), database.NewInterlServerError("error"))
 
 	queryResponse, err := useCase.Execute(mockCarritoID)
 
@@ -101,7 +101,7 @@ func TestWhenGetDulcesCarritoWentWrongThenShouldReturnCarrito(t *testing.T) {
 func TestWhenGetDulceByIDWentWrongThenShouldReturnInternalServerError(t *testing.T) {
 	useCase := getImplementation()
 	mockCarritosProvider.On("GetCarritoByCarritoID", mockCarritoID).Return(getMockCarrito(), nil)
-	mockDulcesProvider.On("GetDulcesListByCarritoID", mockCarritoID).Return(getMockDulcesIDList(), nil)
+	mockDulcesProvider.On("GetDulcesListByCarritoID", mockCarritoID).Return(getMockDulcesInCarritoList(), nil)
 	mockDulcesProvider.On("GetDetailByID", mockDulceID1).Return(query.DetalleDulce{}, database.NewInterlServerError("error"))
 
 	queryResponse, err := useCase.Execute(mockCarritoID)
@@ -120,7 +120,7 @@ func TestWhenGetDulceByIDWentWrongThenShouldReturnInternalServerError(t *testing
 func TestWhenGetCategoriasByDulceWentWrongThenShouldReturnInternalServerError(t *testing.T) {
 	useCase := getImplementation()
 	mockCarritosProvider.On("GetCarritoByCarritoID", mockCarritoID).Return(getMockCarrito(), nil)
-	mockDulcesProvider.On("GetDulcesListByCarritoID", mockCarritoID).Return(getMockDulcesIDList(), nil)
+	mockDulcesProvider.On("GetDulcesListByCarritoID", mockCarritoID).Return(getMockDulcesInCarritoList(), nil)
 	mockDulcesProvider.On("GetDetailByID", mockDulceID1).Return(getPartialResponse1(), nil)
 	mockCategoriasProvider.On("GetCategoriasByDulceID", mockDulceID1).Return([]entities.Categoria{}, database.NewInterlServerError("error"))
 
@@ -158,9 +158,22 @@ func getMockCarrito() entities.Carrito {
 	}
 }
 
-func getMockDulcesIDList() []uint64 {
-	return []uint64{
-		mockDulceID1, mockDulceID2,
+func getMockDulcesInCarritoList() []entities.CarritoDulce {
+	return []entities.CarritoDulce{
+		{
+			ID:        1,
+			DulceID:   mockDulceID1,
+			CarritoID: mockCarritoID,
+			Unidades:  2,
+			Subtotal:  2000,
+		},
+		{
+			ID:        2,
+			DulceID:   mockDulceID2,
+			CarritoID: mockCarritoID,
+			Unidades:  1,
+			Subtotal:  1000,
+		},
 	}
 }
 
@@ -233,54 +246,62 @@ func getMockExpectedResponse() query.GetDetalleCarrito {
 		PrecioTotal: 100,
 		Descuento:   5,
 		Envio:       5,
-		DulcesList: []query.DetalleDulce{
+		DulcesList: []query.DulceInCarrito{
 			{
-				ID:           mockDulceID1,
-				Nombre:       "Chocolatina",
-				Descripcion:  "Deliciosa chocolatina que se derrite en tu boca",
-				Imagen:       "imagen",
-				Disponibles:  100,
-				PrecioUnidad: 1000,
-				Peso:         40,
-				Codigo:       "2",
-				Presentacion: entities.Presentacion{
-					ID:     1,
-					Nombre: "Empaque",
-				},
-				Marca: entities.Marca{
-					ID:     2,
-					Nombre: "Jet",
-				},
-				Categorias: []entities.Categoria{
-					{
+				DetalleDulce: query.DetalleDulce{
+					ID:           mockDulceID1,
+					Nombre:       "Chocolatina",
+					Descripcion:  "Deliciosa chocolatina que se derrite en tu boca",
+					Imagen:       "imagen",
+					Disponibles:  100,
+					PrecioUnidad: 1000,
+					Peso:         40,
+					Codigo:       "2",
+					Presentacion: entities.Presentacion{
+						ID:     1,
+						Nombre: "Empaque",
+					},
+					Marca: entities.Marca{
 						ID:     2,
-						Nombre: "Chocolates",
+						Nombre: "Jet",
+					},
+					Categorias: []entities.Categoria{
+						{
+							ID:     2,
+							Nombre: "Chocolates",
+						},
 					},
 				},
+				Unidades: 2,
+				Subtotal: 2000,
 			},
 			{
-				ID:           mockDulceID2,
-				Nombre:       "Gomitas",
-				Descripcion:  "Ositos de gomita con sabores explosivos",
-				Imagen:       "imagen",
-				Disponibles:  100,
-				PrecioUnidad: 1000,
-				Peso:         40,
-				Codigo:       "2",
-				Presentacion: entities.Presentacion{
-					ID:     1,
-					Nombre: "Paquete",
-				},
-				Marca: entities.Marca{
-					ID:     2,
-					Nombre: "Trululú",
-				},
-				Categorias: []entities.Categoria{
-					{
+				DetalleDulce: query.DetalleDulce{
+					ID:           mockDulceID2,
+					Nombre:       "Gomitas",
+					Descripcion:  "Ositos de gomita con sabores explosivos",
+					Imagen:       "imagen",
+					Disponibles:  100,
+					PrecioUnidad: 1000,
+					Peso:         40,
+					Codigo:       "2",
+					Presentacion: entities.Presentacion{
 						ID:     1,
-						Nombre: "Gomitas",
+						Nombre: "Paquete",
+					},
+					Marca: entities.Marca{
+						ID:     2,
+						Nombre: "Trululú",
+					},
+					Categorias: []entities.Categoria{
+						{
+							ID:     1,
+							Nombre: "Gomitas",
+						},
 					},
 				},
+				Unidades: 1,
+				Subtotal: 1000,
 			},
 		},
 	}
