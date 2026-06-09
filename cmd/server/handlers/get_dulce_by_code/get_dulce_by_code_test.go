@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"bubblegum-api/internal/domain/dto/query"
+	"bubblegum-api/internal/domain/dto/responses"
 	"bubblegum-api/internal/domain/entities"
 	"bubblegum-api/internal/domain/errors/database"
 	"bubblegum-api/internal/usecase/mocks"
@@ -33,7 +33,7 @@ func CreateServer() *gin.Engine {
 
 func TestOK(t *testing.T) {
 	r := CreateServer()
-	expectedResponse := query.DetalleDulce{
+	expectedResponse := responses.DetalleDulce{
 		ID:           2,
 		Nombre:       "Chocolatina",
 		Descripcion:  "Deliciosa chocolatina que se derrite en tu boca",

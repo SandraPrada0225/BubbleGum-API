@@ -6,6 +6,7 @@ import (
 	getdulcebycodehandler "bubblegum-api/cmd/server/handlers/get_dulce_by_code"
 	getfiltroshandler "bubblegum-api/cmd/server/handlers/get_filtros"
 	"bubblegum-api/cmd/server/handlers/ping"
+	updatecarritohandler "bubblegum-api/cmd/server/handlers/update_carrito"
 	"bubblegum-api/internal/repositories/carritos"
 	"bubblegum-api/internal/repositories/categorias"
 	"bubblegum-api/internal/repositories/dulces"
@@ -14,6 +15,7 @@ import (
 	getcarritobyidusecase "bubblegum-api/internal/usecase/get_carrito_by_id"
 	getdulcebycodeusecase "bubblegum-api/internal/usecase/get_dulce_by_code"
 	getfiltrosusecase "bubblegum-api/internal/usecase/get_filtros"
+	updatecarritousecase "bubblegum-api/internal/usecase/update_carrito"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -82,6 +84,11 @@ func (r router) MapRoutes() {
 		CategoriasProvider: categoriasProvider,
 	}
 
+	updateCarrito := updatecarritousecase.Implementation{
+		CarritoProvider: carritosProvider,
+		DulcesProvider:  dulcesProvider,
+	}
+
 	//Handlers
 	getDulceByCodeHandler := getdulcebycodehandler.GetDulcebyCode{
 		UseCase: getDulceByCodeUseCase,
@@ -95,6 +102,10 @@ func (r router) MapRoutes() {
 		UseCase: getCarritosByID,
 	}
 
+	updateCarritoHandler := updatecarritohandler.UpdateCarrito{
+		UseCase: updateCarrito,
+	}
+
 	// endPoint
 	dulcesGrupo := r.rg.Group("/dulces")
 	dulcesGrupo.GET("/:codigo", getDulceByCodeHandler.Handle())
@@ -104,4 +115,5 @@ func (r router) MapRoutes() {
 
 	carritosGroup := r.rg.Group("/carritos")
 	carritosGroup.GET("/:id", getCarritosByIDHandler.Handle())
+	carritosGroup.PUT("/:id", updateCarritoHandler.Handle())
 }

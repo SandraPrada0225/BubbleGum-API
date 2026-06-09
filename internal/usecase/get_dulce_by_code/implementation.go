@@ -1,7 +1,7 @@
 package getdulcebycode
 
 import (
-	"bubblegum-api/internal/domain/dto/query"
+	"bubblegum-api/internal/domain/dto/responses"
 	"bubblegum-api/internal/repositories/providers"
 )
 
@@ -10,15 +10,15 @@ type Implementation struct {
 	CategoriasProvider providers.CategoriasProvider
 }
 
-func (UseCase Implementation) Execute(codigo string) (query.DetalleDulce, error) {
+func (UseCase Implementation) Execute(codigo string) (responses.DetalleDulce, error) {
 	response, err := UseCase.DulcesProvider.GetByCode(codigo)
 	if err != nil {
-		return query.DetalleDulce{}, err
+		return responses.DetalleDulce{}, err
 	}
 
 	categorias, err := UseCase.CategoriasProvider.GetCategoriasByDulceID(response.ID)
 	if err != nil {
-		return query.DetalleDulce{}, err
+		return responses.DetalleDulce{}, err
 	}
 
 	response.AddCategorias(categorias)

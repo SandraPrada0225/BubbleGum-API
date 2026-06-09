@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"bubblegum-api/internal/domain/dto/query"
+	"bubblegum-api/internal/domain/dto/responses"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +12,7 @@ type GetFiltros struct {
 }
 
 type GetFiltrosUseCase interface {
-	Execute() (query.GetFiltros, error)
+	Execute() (responses.GetFiltros, error)
 }
 
 func (handler GetFiltros) Handle() gin.HandlerFunc {

@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"bubblegum-api/internal/domain/dto/query"
+	"bubblegum-api/internal/domain/dto/responses"
 	"bubblegum-api/internal/domain/entities"
 	"bubblegum-api/internal/domain/errors/database"
 	"bubblegum-api/internal/usecase/mocks"
@@ -33,7 +33,7 @@ func CreateServerGetFiltros() *gin.Engine {
 
 func TestOKGetFiltros(t *testing.T) {
 	r := CreateServerGetFiltros()
-	filtros := query.GetFiltros{
+	filtros := responses.GetFiltros{
 		Categorias: []entities.Categoria{
 			{
 				ID:     1,
@@ -83,7 +83,7 @@ func TestOKGetFiltros(t *testing.T) {
 func TestWhenInternalServerErrorShouldReturn500GetFiltros(t *testing.T) {
 	r := CreateServerGetFiltros()
 
-	mockGetFiltros.On("Execute").Return(query.GetFiltros{}, database.NewInterlServerError(""))
+	mockGetFiltros.On("Execute").Return(responses.GetFiltros{}, database.NewInterlServerError(""))
 	request := httptest.NewRequest("GET", "/api/filtros/", bytes.NewBuffer([]byte("")))
 	request.Header.Add("Content-type", "appliction/json")
 	response := httptest.NewRecorder()

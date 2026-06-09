@@ -1,7 +1,7 @@
 package mocks
 
 import (
-	"bubblegum-api/internal/domain/dto/query"
+	"bubblegum-api/internal/domain/dto/responses"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -10,12 +10,12 @@ type MockGetDulceByCode struct {
 	mock.Mock
 }
 
-func (mock *MockGetDulceByCode) Execute(codigo string) (query.DetalleDulce, error) {
+func (mock *MockGetDulceByCode) Execute(codigo string) (responses.DetalleDulce, error) {
 	response := mock.Called(codigo)
 	dulce := response.Get(0)
 	err := response.Error(1)
 	if err != nil {
-		return query.DetalleDulce{}, err
+		return responses.DetalleDulce{}, err
 	}
-	return dulce.(query.DetalleDulce), nil
+	return dulce.(responses.DetalleDulce), nil
 }

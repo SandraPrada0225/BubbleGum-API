@@ -1,4 +1,4 @@
-package query
+package responses
 
 import "bubblegum-api/internal/domain/entities"
 

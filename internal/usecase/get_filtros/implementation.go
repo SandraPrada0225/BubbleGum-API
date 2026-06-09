@@ -1,7 +1,7 @@
 package getfiltros
 
 import (
-	"bubblegum-api/internal/domain/dto/query"
+	"bubblegum-api/internal/domain/dto/responses"
 	"bubblegum-api/internal/repositories/providers"
 )
 
@@ -11,27 +11,27 @@ type Implementation struct {
 	PresentacionesProvider providers.PresentacionesProvider
 }
 
-func (UseCase Implementation) Execute() (query.GetFiltros, error) {
+func (UseCase Implementation) Execute() (responses.GetFiltros, error) {
 
 	marcas, err := UseCase.MarcasProvider.GetAll()
 
 	if err != nil {
-		return query.GetFiltros{}, err
+		return responses.GetFiltros{}, err
 	}
 
 	categorias, err := UseCase.CategoriasProvider.GetAll()
 
 	if err != nil {
-		return query.GetFiltros{}, err
+		return responses.GetFiltros{}, err
 	}
 
 	presentaciones, err := UseCase.PresentacionesProvider.GetAll()
 
 	if err != nil {
-		return query.GetFiltros{}, err
+		return responses.GetFiltros{}, err
 	}
 
-	return query.GetFiltros{
+	return responses.GetFiltros{
 		Marcas:         marcas,
 		Categorias:     categorias,
 		Presentaciones: presentaciones,

@@ -1,7 +1,7 @@
 package mocks
 
 import (
-	"bubblegum-api/internal/domain/dto/query"
+	"bubblegum-api/internal/domain/dto/responses"
 	"bubblegum-api/internal/domain/entities"
 
 	"github.com/stretchr/testify/mock"
@@ -11,26 +11,37 @@ type MockDulceProvider struct {
 	mock.Mock
 }
 
-func (mock *MockDulceProvider) GetByCode(codigo string) (query.DetalleDulce, error) {
+func (mock *MockDulceProvider) GetByCode(codigo string) (responses.DetalleDulce, error) {
 	args := mock.Called(codigo)
 	response := args.Get(0)
 	err := args.Error(1)
 
 	if response != nil {
-		return response.(query.DetalleDulce), err
+		return response.(responses.DetalleDulce), err
 	}
-	return query.DetalleDulce{}, err
+	return responses.DetalleDulce{}, err
 }
 
-func (mock *MockDulceProvider) GetDetailByID(id uint64) (query.DetalleDulce, error) {
+func (mock *MockDulceProvider) GetByID(id uint64) (entities.Dulce, error) {
 	args := mock.Called(id)
 	response := args.Get(0)
 	err := args.Error(1)
 
 	if response != nil {
-		return response.(query.DetalleDulce), err
+		return response.(entities.Dulce), err
 	}
-	return query.DetalleDulce{}, err
+	return entities.Dulce{}, err
+}
+
+func (mock *MockDulceProvider) GetDetailByID(id uint64) (responses.DetalleDulce, error) {
+	args := mock.Called(id)
+	response := args.Get(0)
+	err := args.Error(1)
+
+	if response != nil {
+		return response.(responses.DetalleDulce), err
+	}
+	return responses.DetalleDulce{}, err
 }
 
 func (mock *MockDulceProvider) GetDulcesListByCarritoID(id uint64) ([]entities.CarritoDulce, error) {

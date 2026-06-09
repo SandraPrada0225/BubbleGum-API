@@ -1,4 +1,4 @@
-package query
+package responses
 
 import (
 	"bubblegum-api/internal/domain/entities"
@@ -7,7 +7,7 @@ import (
 type DetalleDulce struct {
 	ID               uint64                `json:"id"`
 	Peso             int                   `json:"peso"`
-	PrecioUnidad     int                   `json:"precio_unidad"`
+	PrecioUnidad     float64               `json:"precio_unidad"`
 	Disponibles      int                   `json:"disponibles"`
 	Subtotal         int                   `json:"subtotal"`
 	Codigo           string                `json:"codigo"`

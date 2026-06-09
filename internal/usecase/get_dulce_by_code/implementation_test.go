@@ -1,7 +1,7 @@
 package getdulcebycode
 
 import (
-	"bubblegum-api/internal/domain/dto/query"
+	"bubblegum-api/internal/domain/dto/responses"
 	"bubblegum-api/internal/domain/entities"
 	"bubblegum-api/internal/domain/errors/database"
 	"bubblegum-api/internal/repositories/mocks"
@@ -54,7 +54,7 @@ func TestWhenSuccesfullReturnDulce(t *testing.T) {
 func TestWhenGetDulceWhentWrongShouldReturnInternalServerError(t *testing.T) {
 	initialize()
 	expectedDulce := getPartialResponse()
-	mockDulceProvider.On("GetByCode", expectedDulce.Codigo).Return(query.DetalleDulce{}, database.NewInterlServerError("error"))
+	mockDulceProvider.On("GetByCode", expectedDulce.Codigo).Return(responses.DetalleDulce{}, database.NewInterlServerError("error"))
 
 	dulce, err := useCase.Execute(expectedDulce.Codigo)
 
@@ -70,7 +70,7 @@ func TestWhenGetDulceWhentWrongShouldReturnInternalServerError(t *testing.T) {
 func TestWhendulceBotFoundThenShouldReturnNotFoundError(t *testing.T) {
 	initialize()
 	expectedDulce := getPartialResponse()
-	mockDulceProvider.On("GetByCode", expectedDulce.Codigo).Return(query.DetalleDulce{}, database.NewNotFoundError("error"))
+	mockDulceProvider.On("GetByCode", expectedDulce.Codigo).Return(responses.DetalleDulce{}, database.NewNotFoundError("error"))
 
 	dulce, err := useCase.Execute(expectedDulce.Codigo)
 
@@ -104,8 +104,8 @@ func TestWhenGetCategoriasWentWrongShouldReturnInternalServer(t *testing.T) {
 	mockCategoriaProvider.AssertNumberOfCalls(t, "GetCategoriasByDulceID", 1)
 }
 
-func getPartialResponse() query.DetalleDulce {
-	return query.DetalleDulce{
+func getPartialResponse() responses.DetalleDulce {
+	return responses.DetalleDulce{
 		ID:           2,
 		Nombre:       "Chocolatina",
 		Descripcion:  "Deliciosa chocolatina que se derrite en tu boca",

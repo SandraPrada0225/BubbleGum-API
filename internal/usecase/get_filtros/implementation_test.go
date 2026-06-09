@@ -1,7 +1,7 @@
 package getfiltros
 
 import (
-	"bubblegum-api/internal/domain/dto/query"
+	"bubblegum-api/internal/domain/dto/responses"
 	"bubblegum-api/internal/domain/entities"
 	"bubblegum-api/internal/domain/errors/database"
 	"bubblegum-api/internal/repositories/mocks"
@@ -99,8 +99,8 @@ func TestWentWrongGetPresentacionesRun(t *testing.T) {
 	mockPresentacionProvider.AssertNumberOfCalls(t, "GetAll", 1)
 }
 
-func Getfiltros() (filtros query.GetFiltros) {
-	filtros = query.GetFiltros{
+func Getfiltros() (filtros responses.GetFiltros) {
+	filtros = responses.GetFiltros{
 		Categorias: []entities.Categoria{
 			{
 				ID:     1,

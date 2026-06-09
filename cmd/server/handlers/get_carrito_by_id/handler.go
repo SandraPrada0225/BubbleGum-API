@@ -1,7 +1,7 @@
 package getcarritobyid
 
 import (
-	"bubblegum-api/internal/domain/dto/query"
+	"bubblegum-api/internal/domain/dto/responses"
 	"bubblegum-api/internal/domain/errors/database"
 	errormessages "bubblegum-api/internal/domain/errors/error_messages"
 	"bubblegum-api/internal/domain/errors/rest"
@@ -16,7 +16,7 @@ type GetCarritoByID struct {
 }
 
 type UseCase interface {
-	Execute(id uint64) (query.GetDetalleCarrito, error)
+	Execute(id uint64) (responses.GetDetalleCarrito, error)
 }
 
 func (handler GetCarritoByID) Handle() gin.HandlerFunc {

@@ -1,4 +1,4 @@
-package query
+package responses
 
 type DulceInCarrito struct {
 	DetalleDulce

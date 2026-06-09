@@ -1,7 +1,7 @@
 package getcarritobyid
 
 import (
-	"bubblegum-api/internal/domain/dto/query"
+	"bubblegum-api/internal/domain/dto/responses"
 	"bubblegum-api/internal/domain/entities"
 	"bubblegum-api/internal/domain/errors/database"
 	"bubblegum-api/internal/usecase/mocks"
@@ -39,15 +39,15 @@ func CreateServer() *gin.Engine {
 
 func TestOK(t *testing.T) {
 	r := CreateServer()
-	expectedResponse := query.GetDetalleCarrito{
+	expectedResponse := responses.GetDetalleCarrito{
 		ID:          mockCarritoID,
 		Subtotal:    5,
 		PrecioTotal: 100,
 		Descuento:   5,
 		Envio:       5,
-		DulcesList: []query.DulceInCarrito{
+		DulcesList: []responses.DulceInCarrito{
 			{
-				DetalleDulce: query.DetalleDulce{
+				DetalleDulce: responses.DetalleDulce{
 					ID:           mockDulceID1,
 					Nombre:       "Chocolatina",
 					Descripcion:  "Deliciosa chocolatina que se derrite en tu boca",
@@ -75,7 +75,7 @@ func TestOK(t *testing.T) {
 				Subtotal: 2000,
 			},
 			{
-				DetalleDulce: query.DetalleDulce{
+				DetalleDulce: responses.DetalleDulce{
 					ID:           mockDulceID2,
 					Nombre:       "Gomitas",
 					Descripcion:  "Ositos de gomita con sabores explosivos",
