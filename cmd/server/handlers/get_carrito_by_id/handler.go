@@ -3,7 +3,7 @@ package getcarritobyid
 import (
 	"bubblegum-api/internal/domain/dto/responses"
 	"bubblegum-api/internal/domain/errors/database"
-	errormessages "bubblegum-api/internal/domain/errors/error_messages"
+	"bubblegum-api/internal/domain/errors/errormessages"
 	"bubblegum-api/internal/domain/errors/rest"
 	"net/http"
 	"strconv"

@@ -4,7 +4,7 @@ import (
 	"bubblegum-api/internal/domain/dto/responses"
 	"bubblegum-api/internal/domain/entities"
 	"bubblegum-api/internal/domain/errors/database"
-	errormessages "bubblegum-api/internal/domain/errors/error_messages"
+	"bubblegum-api/internal/domain/errors/errormessages"
 	"errors"
 	"fmt"
 

@@ -6,15 +6,19 @@ import (
 	getdulcebycodehandler "bubblegum-api/cmd/server/handlers/get_dulce_by_code"
 	getfiltroshandler "bubblegum-api/cmd/server/handlers/get_filtros"
 	"bubblegum-api/cmd/server/handlers/ping"
+	purchasecarritoHandler "bubblegum-api/cmd/server/handlers/purchasecarrito"
 	updatecarritohandler "bubblegum-api/cmd/server/handlers/update_carrito"
+	ventas "bubblegum-api/internal/repositories/Ventas"
 	"bubblegum-api/internal/repositories/carritos"
 	"bubblegum-api/internal/repositories/categorias"
 	"bubblegum-api/internal/repositories/dulces"
 	"bubblegum-api/internal/repositories/marcas"
 	"bubblegum-api/internal/repositories/presentaciones"
+	"bubblegum-api/internal/repositories/usuarios"
 	getcarritobyidusecase "bubblegum-api/internal/usecase/get_carrito_by_id"
 	getdulcebycodeusecase "bubblegum-api/internal/usecase/get_dulce_by_code"
 	getfiltrosusecase "bubblegum-api/internal/usecase/get_filtros"
+	purchasecarritousecase "bubblegum-api/internal/usecase/purchasecarrito"
 	updatecarritousecase "bubblegum-api/internal/usecase/update_carrito"
 
 	"github.com/gin-gonic/gin"
@@ -66,6 +70,13 @@ func (r router) MapRoutes() {
 		DB: r.db,
 	}
 
+	ventasProvider := ventas.Repository{
+		DB: r.db,
+	}
+
+	usuariosProvider := usuarios.Repository{
+		DB: r.db,
+	}
 	//UseCase
 	getDulceByCodeUseCase := getdulcebycodeusecase.Implementation{
 		DulcesProvider:     dulcesProvider,
@@ -89,6 +100,12 @@ func (r router) MapRoutes() {
 		DulcesProvider:  dulcesProvider,
 	}
 
+	puchaseCarritoUseCase := purchasecarritousecase.Implementation{
+		CarritosProvider: carritosProvider,
+		UsuariosProvider: usuariosProvider,
+		VentasProvider:   ventasProvider,
+	}
+
 	//Handlers
 	getDulceByCodeHandler := getdulcebycodehandler.GetDulcebyCode{
 		UseCase: getDulceByCodeUseCase,
@@ -106,6 +123,10 @@ func (r router) MapRoutes() {
 		UseCase: updateCarrito,
 	}
 
+	purchaseCarritoH := purchasecarritoHandler.PurchaseCarrito{
+		UseCase: puchaseCarritoUseCase,
+	}
+
 	// endPoint
 	dulcesGrupo := r.rg.Group("/dulces")
 	dulcesGrupo.GET("/:codigo", getDulceByCodeHandler.Handle())
@@ -115,5 +136,6 @@ func (r router) MapRoutes() {
 
 	carritosGroup := r.rg.Group("/carritos")
 	carritosGroup.GET("/:id", getCarritosByIDHandler.Handle())
+	carritosGroup.PUT("/:id/comprar", purchaseCarritoH.Handle())
 	carritosGroup.PUT("/:id", updateCarritoHandler.Handle())
 }
