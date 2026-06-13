@@ -4,9 +4,9 @@ import "time"
 
 type Venta struct {
 	ID            uint64
-	MedioDePagoID uint64 `gorm:"column:medios_de_pago_id"`
-	CarritoID     uint64 `gorm:"column:carritos_id"`
-	CompradorID   uint64 `gorm:"column:usuarios_id"`
+	MedioDePagoID uint64
+	CarritoID     uint64
+	CompradorID   uint64
 	CreatedAt     time.Time
 }
 

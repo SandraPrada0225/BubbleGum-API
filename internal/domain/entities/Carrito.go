@@ -1,6 +1,6 @@
 package entities
 
-import estadoscarrito "bubblegum-api/internal/domain/constants/estados_carrito"
+import estadocarrito "bubblegum-api/internal/domain/constants/estados_carrito"
 
 type Carrito struct {
 	ID              uint64
@@ -8,15 +8,15 @@ type Carrito struct {
 	Subtotal        float64
 	Envio           float64
 	Descuento       float64
-	EstadoCarritoID uint64 `gorm:"column:estados_carrito_id"`
+	EstadoCarritoID uint64
 }
 
 func (carrito *Carrito) MarkAsPruchased() {
-	carrito.EstadoCarritoID = estadoscarrito.Purchased
+	carrito.EstadoCarritoID = estadocarrito.Purchased
 }
 
 func NewEmptyCarrito() Carrito {
 	return Carrito{
-		EstadoCarritoID: estadoscarrito.Active,
+		EstadoCarritoID: estadocarrito.Active,
 	}
 }

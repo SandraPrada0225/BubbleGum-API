@@ -5,6 +5,7 @@ import (
 	getcarritosbyidhandler "bubblegum-api/cmd/server/handlers/get_carrito_by_id"
 	getdulcebycodehandler "bubblegum-api/cmd/server/handlers/get_dulce_by_code"
 	getfiltroshandler "bubblegum-api/cmd/server/handlers/get_filtros"
+	getpurchaselisthandler "bubblegum-api/cmd/server/handlers/getpurchaselistbyuserid"
 	"bubblegum-api/cmd/server/handlers/ping"
 	purchasecarritoHandler "bubblegum-api/cmd/server/handlers/purchasecarrito"
 	updatecarritohandler "bubblegum-api/cmd/server/handlers/update_carrito"
@@ -18,6 +19,7 @@ import (
 	getcarritobyidusecase "bubblegum-api/internal/usecase/get_carrito_by_id"
 	getdulcebycodeusecase "bubblegum-api/internal/usecase/get_dulce_by_code"
 	getfiltrosusecase "bubblegum-api/internal/usecase/get_filtros"
+	getpurchaselistusecase "bubblegum-api/internal/usecase/getpurchaselistbyuserid"
 	purchasecarritousecase "bubblegum-api/internal/usecase/purchasecarrito"
 	updatecarritousecase "bubblegum-api/internal/usecase/update_carrito"
 
@@ -106,6 +108,10 @@ func (r router) MapRoutes() {
 		VentasProvider:   ventasProvider,
 	}
 
+	getPurchaseListByUserIDUseCase := getpurchaselistusecase.Implementation{
+		VentasProvider: ventasProvider,
+	}
+
 	//Handlers
 	getDulceByCodeHandler := getdulcebycodehandler.GetDulcebyCode{
 		UseCase: getDulceByCodeUseCase,
@@ -123,8 +129,12 @@ func (r router) MapRoutes() {
 		UseCase: updateCarrito,
 	}
 
-	purchaseCarritoH := purchasecarritoHandler.PurchaseCarrito{
+	purchaseCarritoHandler := purchasecarritoHandler.PurchaseCarrito{
 		UseCase: puchaseCarritoUseCase,
+	}
+
+	getPurchaseListByUserIDHandler := getpurchaselisthandler.GetPurchaseListByUserID{
+		UseCase: getPurchaseListByUserIDUseCase,
 	}
 
 	// endPoint
@@ -136,6 +146,9 @@ func (r router) MapRoutes() {
 
 	carritosGroup := r.rg.Group("/carritos")
 	carritosGroup.GET("/:id", getCarritosByIDHandler.Handle())
-	carritosGroup.PUT("/:id/comprar", purchaseCarritoH.Handle())
+	carritosGroup.PUT("/:id/comprar", purchaseCarritoHandler.Handle())
 	carritosGroup.PUT("/:id", updateCarritoHandler.Handle())
+
+	usersGroup := r.rg.Group("/users")
+	usersGroup.GET(":id/compras", getPurchaseListByUserIDHandler.Handle())
 }
