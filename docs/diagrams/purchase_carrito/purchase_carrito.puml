@@ -1,0 +1,82 @@
+@startuml
+
+participant Caller as caller 
+participant Handler as handler 
+participant PurchaseCarritoCommand as pcommand
+participant UseCase as uc 
+participant CarritosProvider as carritosp 
+participant UsuariosProvider as usuariosp
+participant CarritoEntity as carritoe 
+participant VentaEntity as ventae
+participant VentasProvider as ventasp
+
+caller -> handler ++: PUT api/carritos/{id}/comprar
+    handler -> handler: id, err := strconv.PaseUint(c.Param("id"), 10, 64)
+    alt err != nil 
+        handler -> caller: 400 Bad Request 
+    end 
+    handler -> handler: var request contract.Request
+    handler -> handler: err = c.ShouldBindJson(&request.Noby)
+
+    alt err != nil 
+        handler -> caller: 400 Bad Request 
+    end 
+
+    handler -> pcommand ++: NewPurchaseCarritoCommandFromRequest(request)
+    pcommand -> handler --: <command>
+
+    handler -> uc ++: Execute(command)
+        uc -> carritosp ++: GetByID(commad.CarritoID)
+        carritosp -> uc --: <carrito, err>
+        alt err != nil 
+            uc -> handler: <0, err>
+            handler -> caller: GetAPIErrors(err)
+        end 
+
+        alt EstadoCarritoID == estadoscarrito.Purchased 
+            uc -> handler: <0, bussines.NewCarritoAlreadyPurchasedError()>
+            handler -> caller: GetAPIErrors(err)
+        end 
+
+        uc -> usuariosp ++: GetByID(command.CompradorID)
+        usuariosp -> uc --: <carrito, err>
+        alt err != nil 
+            uc -> handler: <0, err>
+            handler -> caller: GetAPIErrors(err)
+        end 
+
+        uc -> carritoe ++: carrito.MarkAsPurchased()
+        carritoe -> carritoe: EstadosCarritoID \n = Purchased
+        carritoe -> uc --: <carrito>
+
+        uc -> carritosp ++: Save(carrito)
+        carritosp -> uc --: <err>
+        alt err != nil 
+            uc -> handler: <0, err>
+            handler -> caller: GetAPIErrors(err)
+        end 
+
+        uc -> ventae ++: NewVenta(commad.MedioDePagoID, command.CarritoID, command.CompradorID)
+        ventae -> uc --: <venta>
+
+        uc -> ventasp ++: Create(venta)
+        ventasp -> uc --:<err>
+        alt err != nil 
+            uc -> handler: <0, err>
+            handler -> caller: GetAPIErrors(Err)
+        end 
+
+        uc -> carritoe ++: NewEmptyCarrito()
+        carritoe -> carritoe: carrito{\n Estado: Active\n}
+        carritoe -> uc --: <carrito>
+
+        uc -> usuariosp ++: UpdateCarritoID(newCarrito.ID)
+        usuariosp -> uc --: <err> 
+        alt err != nil 
+            uc -> handler: <0, err>
+            handler -> caller: GetAPIErrors(err)
+        end 
+    uc -> handler --: newCarrito.ID, nil
+handler -> caller --: 200 OK, newCarritoID
+
+@enduml

@@ -1,0 +1,46 @@
+@startuml Get Filtros
+ 
+participant Caller
+participant Handler
+participant UseCase
+participant MarcasProvider as marcasp
+participant CategoriasProvider as categoriasp
+participant PresentacionesProvider as presentacionesp
+participant Query
+participant DB
+
+Caller -> Handler ++: GET api/filtros/
+    Handler -> UseCase ++: Execute()
+        UseCase -> marcasp ++: GetAll()
+        marcasp -> DB ++: SELECT * FROM marcas
+        DB -> marcasp --: <[]marcas, err error>
+        alt err != nil
+            marcasp -> UseCase: <nil, error>
+            UseCase -> Handler: <nil, error>
+            Handler -> Caller: error
+        end
+        marcasp -> UseCase-- : <[]marcas, nil>
+        UseCase -> presentacionesp ++: GetAll()
+        presentacionesp -> DB ++: SELECT * FROM presentaciones
+        DB -> presentacionesp --: <[]presentaciones, err error>
+        alt err != nil
+            presentacionesp -> UseCase: <nil, error>
+            UseCase -> Handler: <nil, error>
+            Handler -> Caller: error
+        end
+        presentacionesp -> UseCase-- : <[]presentaciones, nil>
+        UseCase -> categoriasp ++: GetAll()
+        categoriasp -> DB ++: SELECT * FROM categorias
+        DB -> categoriasp --: <[]categorias, err error>
+        alt err != nil
+            categoriasp -> UseCase: <nil, error>
+            UseCase -> Handler: <nil, error>
+            Handler -> Caller: error
+        end
+        categoriasp -> UseCase-- : <[]categorias, nil>
+        UseCase -> Query ++: GetFiltros{marcas, presentaciones, categorias}
+        Query -> UseCase --: <GetFiltros>
+    UseCase -> Handler --: <query.GetFiltros, nil>
+Handler -> Caller --: <200, filtros>
+
+@endumls

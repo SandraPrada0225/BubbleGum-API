@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS `dulceria`.`ventas` (
   `medio_de_pago_id` BIGINT NOT NULL,
   `carrito_id` BIGINT NOT NULL,
   `comprador_id` BIGINT NOT NULL,
-  `created_at` VARCHAR(45) NULL,
+  `created_at` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_ventas_medios_de_pago1_idx` (`medio_de_pago_id` ASC) VISIBLE,
   INDEX `fk_ventas_carritos1_idx` (`carrito_id` ASC) VISIBLE,
@@ -373,12 +373,12 @@ BEGIN
         ec.nombre AS estado_carrito
     FROM ventas v
         INNER JOIN carritos c
-            ON c.id = v.carritos_id
+            ON c.id = v.carrito_id
         INNER JOIN medios_de_pago mp
-            ON mp.id = v.medios_de_pago_id
+            ON mp.id = v.medio_de_pago_id
         INNER JOIN estados_carrito ec
-            ON ec.id = c.estados_carrito_id
-    WHERE v.usuarios_id = p_usuario_id
+            ON ec.id = c.estado_carrito_id
+    WHERE v.comprador_id = p_usuario_id
     ORDER BY v.created_at DESC;
 
 END$$

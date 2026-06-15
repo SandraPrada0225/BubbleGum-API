@@ -1,0 +1,54 @@
+@startuml  Get Carrito By Id
+
+participant Caller
+participant Handler as handler
+participant UseCase
+participant DulcesProvider as dulcesp
+participant CategoriasProvider as categoriasp
+participant CarritosProvider as carritosp
+participant Query
+participant DB
+
+Caller -> handler ++: GET api/carritos/{id}
+    handler -> handler: id, err := strconv.ParseUnit(id)
+    alt err != nil
+            handler -> Caller: 400 Bad Request
+    end 
+    handler -> UseCase ++: Execute(id)
+        UseCase -> carritosp ++: GetCarritoByCarritoID(id)
+        carritosp -> UseCase --: <carrito, err>
+        alt err != nil
+            UseCase -> handler: <nil, error>
+            handler -> Caller: error
+        end
+
+        UseCase -> dulcesp ++: GetDulcesListByCarritoID(id)
+        dulcesp -> UseCase --: <dulcesIDList, err>
+        alt err != nil
+            UseCase -> handler: <nil, error>
+            handler -> Caller: error
+        end
+
+        UseCase -> UseCase: dulcesList []query.DetalleDulce
+        loop dulceID := range dulcesIDList
+            UseCase -> dulcesp ++: GetByID(dulceID)
+            dulcesp -> UseCase --: <dulce, err>
+            alt err != nil
+                UseCase -> handler: <nil, error>
+                handler -> Caller: error
+            end
+            UseCase -> categoriasp ++: GetCategoriasByDulceID(id)
+            categoriasp -> UseCase --: <categoriasList, err>
+            alt err != nil
+                UseCase -> handler: <nil, error>
+                handler -> Caller: error
+            end
+            UseCase -> Query ++: query.AddCategorias(categorias)
+            Query -> Query: query.Categorias = categorias
+            Query -> UseCase --: query  
+            UseCase -> UseCase --: dulcesList = append(dulcesList, query)
+        end
+    UseCase -> handler --: query.NewGetDetalleCarrito(carrito, dulcesList), nil
+handler -> Caller --: <200 OK, query>
+
+@endumls
