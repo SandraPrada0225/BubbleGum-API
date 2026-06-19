@@ -1,8 +1,8 @@
-# 🍬 Bubblegum API
+# Bubblegum API
 
 Bubblegum API es una API REST desarrollada para gestionar una plataforma de dulcería. El proyecto permite administrar productos, categorías, carritos de compra y ventas, implementando una arquitectura por capas que facilita el mantenimiento, la escalabilidad y la separación de responsabilidades.
 
-## 🎯 Objetivo
+## Objetivo
 
 El propósito del proyecto es construir una solución backend que permita:
 
@@ -15,7 +15,7 @@ El propósito del proyecto es construir una solución backend que permita:
 
 ---
 
-## 🚀 Tecnologías utilizadas
+## Tecnologías utilizadas
 
 * Go
 * Gin
@@ -28,7 +28,7 @@ El propósito del proyecto es construir una solución backend que permita:
 
 ---
 
-## 🏗 Arquitectura
+## Arquitectura
 
 El proyecto implementa una arquitectura por capas:
 
@@ -68,7 +68,7 @@ Base de Datos
 
 ---
 
-## 📋 Funcionalidades implementadas
+## Funcionalidades implementadas
 
 ### Dulces
 
@@ -104,7 +104,7 @@ La aplicación utiliza MySQL con tablas relacionadas mediante llaves foráneas:
 
 ---
 
-## 📊 Diagramas UML
+## Diagramas UML
 
 La documentación UML se encuentra en:
 
@@ -116,7 +116,7 @@ Incluye diagramas de secuencia para los principales endpoints implementados.
 
 ---
 
-## ⚙ Cómo ejecutar el proyecto
+## Cómo ejecutar el proyecto
 
 Clonar repositorio:
 
